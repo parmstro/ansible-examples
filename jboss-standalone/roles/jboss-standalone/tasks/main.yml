@@ -1,95 +1,68 @@
 ---
-- name: Install Java 1.8 and some basic dependencies
-  yum:
-    name: "[unzip, java-1.8.0-openjdk, libselinux-python, libsemanage-python]"
-    state: present
-   
-- name: Download JBoss from jboss.org
-  get_url:
-    url: http://download.jboss.org/jbossas/7.1/jboss-as-7.1.1.Final/jboss-as-7.1.1.Final.zip
-    dest: /opt/jboss-as-7.1.1.Final.zip
+# simplified installation based on EAP rpm installation
+# supporting RHEL7 and RHEL8 with RPM install
+# requires proper Red Hat Subscriptions to be attached
 
-- name: Extract archive
-  unarchive:
-    dest: /usr/share
-    src: /opt/jboss-as-7.1.1.Final.zip
-    creates: /usr/share/jboss-as
-    copy: no
+- name: Ensure repos are available
+  community.general.rhsm_repository:
+    name: jb-eap-7.3-for-rhel-8-x86_64-rpms
+  when: ansible_distribution_major_version == "8"
 
-  # Rename the dir to avoid encoding the version in the init script
-- name: Rename install directory
-  command: /bin/mv jboss-as-7.1.1.Final jboss-as 
-  args:
-    chdir: /usr/share 
-    creates: /usr/share/jboss-as
+- name: Ensure repos are available
+  community.general.rhsm_repository:
+    name: jb-eap-7.3-for-rhel-7-x86_64-rpms
+  when: ansible_distribution_major_version == "7"
 
-- name: Copying standalone.xml configuration file
-  template:
-    src: standalone.xml
-    dest: /usr/share/jboss-as/standalone/configuration/
-  notify: restart jboss
+- name: Install JBoss EAP 7 group and its dependencies - uses jdk1.8
+  ansible.builtin.yum:
+    name: "@jboss-eap7"
+    state: latest
 
-- name: Add group "jboss"
-  group:
-    name: jboss
+- name: Install Maven and git
+  ansible.built.yum:
+    name: 
+      - maven
+      - git
+    state: "latest"
 
-- name: Add user "jboss"
-  user:
-    name: jboss
-    group: jboss
-    home: /usr/share/jboss-as
-
-- name: Change ownership of JBoss installation
-  file:
-    path: /usr/share/jboss-as/
-    owner: jboss
-    group: jboss
-    state: directory
-    recurse: yes
-
-- name: Copy the init script
-  copy:
-    src: jboss-as-standalone.sh
-    dest: /etc/init.d/jboss
-    mode: 0755
-
-- name: Workaround for systemd bug
-  shell: service jboss start && chkconfig jboss on
-  ignore_errors: yes
-
-- name: Enable JBoss to be started at boot
-  service:
-    name: jboss
-    enabled: yes
+- name: Configure the JBoss EAP 7 Standalone Service
+  ansible.builtin.service:
+    name: eap7-standalone.service
+    enabled: true
     state: started
 
-- name: deploy iptables rules
-  template:
-    src: iptables-save
-    dest: /etc/sysconfig/iptables
-  when: ansible_distribution_major_version != "7"
-  notify: restart iptables
+# RPM Installation creates all users and groups  
+# and appropriately sets file ownership
+
+# clone the jboss-developer github repo for sample apps
+- name: Clone the jboss-developer github repo for sample apps
+  ansible.builtin.git:
+    repo: https://github.com/parmstro/jboss-eap-quickstarts.git
+    dest: /samples/jboss
+
+- name: build and deploy the sample app
+  ansible.builtin.command:
+    chdir: "/samples/jboss/{{ sample_app_dir }}"
+    cmd: "mvn clean install wildfly:deploy"
 
 - name: Ensure that firewalld is installed
-  yum:
+  ansible.builtin.yum:
     name: firewalld
-    state: present
-  when: ansible_distribution_major_version == "7"
-
+    state: latest
+  
 - name: Ensure that firewalld is started
-  service:
+  ansible.builtin.service:
     name: firewalld
     state: started
-  when: ansible_distribution_major_version == "7"
-
+  
 - name: deploy firewalld rules
-  firewalld:
+  ansible.posix.firewalld:
     immediate: yes
-    port: "{{ item }}"
+    port: "{{ port_protocol }}"
     state: enabled
     permanent: yes
-  when: ansible_distribution_major_version == "7"
-  with_items:
+  loop:
   - "{{ http_port }}/tcp"
   - "{{ https_port }}/tcp"
-
+  loop_control:
+    loop_var: port_protocol
