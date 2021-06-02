@@ -11,7 +11,7 @@
   - name: Place a fingerprint file on the server
     file:
       path: "{{ app_fingerprint }}"
-      state: present
+      state: touch 
 
   - name: Display the application path
     debug:
