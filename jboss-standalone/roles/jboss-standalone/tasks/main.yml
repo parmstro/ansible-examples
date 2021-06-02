@@ -37,12 +37,12 @@
 # clone the jboss-developer github repo for sample apps
 - name: Clone the jboss-developer github repo for sample apps
   ansible.builtin.git:
-    repo: https://github.com/parmstro/jboss-eap-quickstarts.git
-    dest: /samples/jboss
+    repo: "{{ sample_app_git_repo }}"
+    dest: "{{ sample_app_root }}"
 
 - name: build and deploy the sample app
   ansible.builtin.command:
-    chdir: "/samples/jboss/{{ sample_app_dir }}"
+    chdir: "{{ sample_app_root }}/{{ sample_app_dir }}"
     cmd: "mvn clean install wildfly:deploy"
 
 - name: Ensure that firewalld is installed
