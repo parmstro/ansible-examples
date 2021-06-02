@@ -47,4 +47,4 @@
         path: "{{ app_fingerprint }}"
         state: absent
 
-    when: fingerprint.exists == true
+    when: fingerprint.stat.exists == true
