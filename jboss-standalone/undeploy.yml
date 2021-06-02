@@ -34,7 +34,7 @@
       firewalld:
         immediate: yes
         port: "{{ port_protocol }}"
-        state: enabled
+        state: disabled 
         permanent: yes
       loop:
       - "{{ http_port }}/tcp"
