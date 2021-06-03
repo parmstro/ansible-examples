@@ -64,6 +64,7 @@
   mysql_user:
     name: "{{ dbuser }}"
     password: "{{ upassword }}"
+    sql_log_bin: true
     priv: "*.*:ALL"
     host: "%"
     state: present
