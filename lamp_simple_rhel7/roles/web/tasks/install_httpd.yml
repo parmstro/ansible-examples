@@ -1,7 +1,7 @@
 ---
 # These tasks install http and the php modules.
 
-- name: Install httpd and php
+- name: Install httpd and php for RHEL 7
   yum: 
     name:
     - httpd
@@ -10,7 +10,7 @@
     state: latest
   when: ansible_distribution_major_version == "7"
 
-- name: Install httpd and php
+- name: Install httpd and php for RHEL 8
   yum: 
     name:
     - httpd
