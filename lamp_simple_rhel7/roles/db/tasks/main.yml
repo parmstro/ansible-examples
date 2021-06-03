@@ -12,7 +12,7 @@
 - name: Install MariaDB package
   dnf: 
     name: 
-    - "@mariadb:10.3/server"
+    - "@mariadb"
     - "python3-PyMySQL"
     - "@python36"
     state: latest
