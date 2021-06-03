@@ -50,7 +50,7 @@
 
 - name: Add firewall rules
   firewalld: 
-    port: {{ mysql_port }}/tcp
+    port: "{{ mysql_port }}/tcp"
     permanent: true
     immediate: true
     state: enabled
@@ -67,6 +67,3 @@
     priv: "*.*:ALL host='%'"
     state: present
 
-- name: Database Object Creation
-- name: Database Data Load
-- name: Database Test Query
