@@ -10,11 +10,11 @@
   when: ansible_distribution_major_version == "7"
 
 - name: Install MariaDB package
-  yum: 
+  dnf: 
     name: 
-    - "@mariadb"
-    - "python3-PyMySQL"
-    - "@python36"
+    - '@mariadb:10.3/server'
+    - 'python3-PyMySQL'
+    - '@python36'
     state: latest
   when: ansible_distribution_major_version == "8"
 
