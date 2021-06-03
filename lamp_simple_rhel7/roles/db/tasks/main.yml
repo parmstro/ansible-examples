@@ -9,25 +9,13 @@
     state: latest
   when: ansible_distribution_major_version == "7"
 
-- name: Install MariaDB AppStream for RHEL 8
+- name: Install MariaDB AppStreams for RHEL 8
   dnf: 
-    name: "@mariadb:10.3/server"
-    state: latest
-    update_cache: true
-  when: ansible_distribution_major_version == "8"
-
-- name: Install python36 AppStream for RHEL 8
-  dnf: 
-    name: "@python36"
-    state: latest
-    update_cache: true
-  when: ansible_distribution_major_version == "8"
-
-- name: Install MariaDB python extension for RHEL 8
-  dnf: 
-    name: "python3-PyMySQL"
-    state: latest
-    update_cache: true
+    name: 
+    - "@mariadb:10.3/server"
+    - "@python36"
+    - "python3-PyMySQL"
+    state: present                                # Must be present NOT latest or will fail - this is a bug https://github.com/ansible/ansible/issues/56504
   when: ansible_distribution_major_version == "8"
 
 - name: Ensure Python3 is the default python on RHEL8 because sample app is old
