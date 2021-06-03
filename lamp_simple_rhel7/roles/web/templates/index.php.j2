@@ -4,10 +4,15 @@
  </head>
  <body>
  </br>
-  <a href=http://{{ ansible_default_ipv4.address }}/index.html>Homepage</a>
+  <a href=http://{{ ansible_fqdn }}/index.html>Homepage</a>
  </br>
+  </br>
+  <a href=http://{{ ansible_fqdn }}/about.html>About</a>
+ </br>
+ <br/>
+ <br/>
 <?php 
- Print "Hello, World! I am a web server configured using Ansible and I am : ";
+ Print "Hello, World! Smoke Testing our LAMP Deployment using Ansible and this host is: ";
  echo exec('hostname');
  Print  "</BR>";
 echo  "List of Databases: </BR>";
