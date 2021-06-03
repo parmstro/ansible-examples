@@ -10,8 +10,6 @@
 - name: Install common dependencies
   yum: 
     name: 
-     - libselinux-python
-     - libsemanage-python
      - firewalld
     state: latest
 
