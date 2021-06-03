@@ -7,11 +7,29 @@
     state: latest
   tags: chrony
 
-- name: Install common dependencies
+- name: Check for predeployed packages - this should present and patched already - return 'ok'
   yum: 
     name: 
      - firewalld
     state: latest
+
+# assert OK
+
+- name: Deploy package that should be available but not installed - this should return 'changed'
+  yum: 
+    name: 
+     - vim-enhanced
+    state: present
+
+# assert changed
+
+- name: Clean it up.
+  yum: 
+    name: 
+     - vim-enhanced
+    state: absent
+
+# assert changed
 
 - name: Configure chrony for time servers
   template: 

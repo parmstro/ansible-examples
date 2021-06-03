@@ -69,3 +69,15 @@
     host: "%"
     state: present
 
+- name: Copy the sample database build files
+  copy: 
+    src: files/{{ item }} 
+    dest: /root/{{ item }}
+  loop:
+    - nation.sql
+
+- name: Create and Populate the sample database
+  mysql_db:
+    state: import
+    name: all
+    target: /root/nation.sql
