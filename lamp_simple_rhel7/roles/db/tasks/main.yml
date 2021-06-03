@@ -1,6 +1,6 @@
 ---
 # We will use modules for RHEL8
-- name: Install MariaDB package
+- name: Install MariaDB packages for RHEL7
   yum: 
     name: 
     - "mariadb-server"
@@ -9,13 +9,14 @@
     state: latest
   when: ansible_distribution_major_version == "7"
 
-- name: Install MariaDB package
+- name: Install MariaDB packages for RHEL 8
   dnf: 
     name: 
     - '@mariadb:10.3/server'
     - 'python3-PyMySQL'
     - '@python36'
     state: latest
+    update_cache: true
   when: ansible_distribution_major_version == "8"
 
 - name: Ensure Python3 is the default python on RHEL8 because sample app is old
