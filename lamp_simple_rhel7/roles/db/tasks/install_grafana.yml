@@ -43,5 +43,7 @@
     - grafana_map_country_area.yml
     - grafana_map_populations.yml
 
-# TODO: create dashboards for 
-#       populations, density, gdp, etc..
+# TODO: 
+#   update admin password
+#   create users
+#   create dashboards for populations, density, gdp, etc..
